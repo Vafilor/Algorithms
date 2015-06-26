@@ -12,7 +12,7 @@ public class ProblemSolver {
 		}
 	
         try {
-            SearchProblem slidingBlock = new SlidingBlockProblem(args[0]);
+            ISearchProblem slidingBlock = new SlidingBlockProblem(args[0]);
 
             System.out.println(slidingBlock.getInitialState());
 

@@ -12,7 +12,7 @@ public class SearchMethods {
      * @param problem
      * @return null for failure, List of actions otherwise.
      */
-    public static List<Object> graphBreadthFirstSearch(SearchProblem problem) {
+    public static List<Object> graphBreadthFirstSearch(ISearchProblem problem) {
         Node node = new Node(problem.getInitialState());
 
         if(problem.isGoalState(node.getState())) {
@@ -64,7 +64,7 @@ public class SearchMethods {
      * @param problem
      * @return
      */
-    public static List<Object> treeDepthFirstSearch(SearchProblem problem) {
+    public static List<Object> treeDepthFirstSearch(ISearchProblem problem) {
         int depth = 0;
 
         List<Object> result = null;
@@ -84,11 +84,11 @@ public class SearchMethods {
         }
     }
 
-    public static List<Object> depthLimitedSearch(SearchProblem problem, int limit) {
+    public static List<Object> depthLimitedSearch(ISearchProblem problem, int limit) {
         return recursiveDepthLimitedSearch(new Node(problem.getInitialState()), problem, limit);
     }
 
-    private static List<Object> recursiveDepthLimitedSearch(Node node, SearchProblem problem, int limit) throws IllegalStateException {
+    private static List<Object> recursiveDepthLimitedSearch(Node node, ISearchProblem problem, int limit) throws IllegalStateException {
         if(problem.isGoalState(node.getState())) {
             return getSolution(node);
         } else if( limit == 0 ) {
@@ -122,7 +122,7 @@ public class SearchMethods {
         }
     }
 
-    private static Node getChildNode(SearchProblem problem, Node parent, Object action) {
+    private static Node getChildNode(ISearchProblem problem, Node parent, Object action) {
         Object newState = problem.getResultingState(parent.getState(), action);
         double pathCost = parent.getPathCost() + problem.getStepCost(parent.getState(), action);
 

@@ -16,6 +16,7 @@ public class SlidingBlockState implements Cloneable{
      */
     private int length;
     private Point blankSpotPosition;
+    private ISlidingBlockGoal goalChecker;
 
     /**
      * Creates a block state given a filename.
@@ -50,6 +51,8 @@ public class SlidingBlockState implements Cloneable{
         if(this.blankSpotPosition == null) {
             throw new IllegalArgumentException("Error - no 0 in supplied file");
         }
+
+        this.goalChecker = new ZeroLastSlidingBlockGoal();
     }
 
     public SlidingBlockState(int length) {
@@ -58,6 +61,8 @@ public class SlidingBlockState implements Cloneable{
         this.state = new int[length][length];
         this.fillInDefaultState(this.state);
         this.blankSpotPosition = new Point(this.length -1, this.length - 1,  0, this.length - 1, 0, this.length - 1);
+
+        this.goalChecker = new ZeroLastSlidingBlockGoal(); //TODO perhaps make this singleton to reduce memory cost.
     }
 
     private SlidingBlockState swap(Point blankPosition, Point newBlankPosition) {
@@ -123,37 +128,7 @@ public class SlidingBlockState implements Cloneable{
     }
 
     public boolean isGoalState() {
-
-        //0 1 2
-        //3 4 5
-        //6 7 8
-//        for(int row = 0; row < this.state.length; row++) {
-//            for(int column = 0; column < this.state[row].length; column++) {
-//                if(this.state[row][column] != (this.length * row + column) ) {
-//                    return false;
-//                }
-//            }
-//        }
-
-//        1 2 3
-//        4 5 6
-//        7 8 0
-        for(int row = 0; row < this.state.length; row++) {
-            for(int column = 0; column < this.state[row].length; column++) {
-
-                if((row == this.state.length - 1) && (column == this.state[row].length - 1) && this.state[row][column] == 0 ) {
-                    return true;
-                } else {
-
-                    if (this.state[row][column] != (this.length * row + column + 1)) {
-                        return false;
-
-                    }
-                }
-            }
-        }
-
-        return true;
+        return this.goalChecker.isGoal(this.state);
     }
 
     private void fillInDefaultState(int[][] state) {

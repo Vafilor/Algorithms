@@ -7,7 +7,7 @@ import java.util.List;
 /**
  * Created by Andrey Melnikov on 6/7/2015.
  */
-public class SlidingBlockProblem implements SearchProblem{
+public class SlidingBlockProblem implements ISearchProblem {
 
     private int length;
     private SlidingBlockState initialState;
