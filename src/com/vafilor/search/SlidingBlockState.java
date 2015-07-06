@@ -52,7 +52,7 @@ public class SlidingBlockState implements Cloneable{
             throw new IllegalArgumentException("Error - no 0 in supplied file");
         }
 
-        this.goalChecker = new ZeroLastSlidingBlockGoal();
+        this.goalChecker = new ZeroLastSlidingBlockGoal(); //TODO perhaps make this singleton to reduce memory cost.
     }
 
     public SlidingBlockState(int length) {
@@ -206,5 +206,10 @@ public class SlidingBlockState implements Cloneable{
 
     public Point getBlankSpotPosition() {
         return this.blankSpotPosition;
+    }
+
+    //TODO how can I avoid exposing this?
+    public int[][] getState() {
+        return state;
     }
 }
