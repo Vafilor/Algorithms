@@ -21,3 +21,10 @@ At this moment, it is sufficient to just run the command (in the com/vafilor/sea
 
 This will output the actions needed to solve the problem in the test3.txt file.
 
+<h3>To Run (Mac/Linux)</h3>
+<ul>
+<li>In the command prompt, navigate to the directory src</li>
+<li>Run the command java com.vafilor.search.ProblemSolver InputFiles/test3.txt</li>
+</ul>
+
+This will output the actions needed to solve the problem in the test3.txt file.
