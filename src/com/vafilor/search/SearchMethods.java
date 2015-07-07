@@ -92,7 +92,7 @@ public class SearchMethods {
     public static List<Object> aStarSearch(ISearchProblem problem) {
         Node node = new Node(problem.getInitialState());
 
-        LinkedList<Node> frontier = new LinkedList<Node>();
+        PriorityQueue<Node> frontier = new PriorityQueue<Node>(new EstimatedDistanceComparator());//LinkedList<Node>();
         frontier.add(node);
         //Use HashMap to keep track of nodes in frontier, much faster to check using HashMap than LinkedList
         HashMap<String, Node> frontierCopy = new HashMap<String, Node>();
@@ -103,9 +103,8 @@ public class SearchMethods {
         Node child = null;
 
         while(!frontier.isEmpty()) {
-            frontier.sort(new EstimatedDistanceComparator());
 
-            node = frontier.pop();
+            node = frontier.poll();
             frontierCopy.remove(node.getState().toString());
 
             if(problem.isGoalState(node.getState())) {
