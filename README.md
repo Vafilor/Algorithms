@@ -27,9 +27,9 @@ The result is a string where the row position of each queen for each column is g
 e.g.
 
 |&nbsp;|Columns|
-|---||-------|
+|------|-------|
 |&nbsp;|0 1 2 3|
-|Row|1 3 0 2|
+|Row   |1 3 0 2|
 
 Means the following arrangement, where the first row is 0 and the first column is 0, and x represents a queen.
 
@@ -39,7 +39,7 @@ Means the following arrangement, where the first row is 0 and the first column i
 |1|X| | | |  
 |2| | | |X|  
 |3| |X| | |  
-  ---------   
+
 
 Comments
 -------------
