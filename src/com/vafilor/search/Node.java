@@ -8,16 +8,18 @@ public class Node {
     private Node parent;
     private Object action;
     private double pathCost;
+    private double estimatedCostOfCheapestSolution;
 
-    public Node(Object state, Node parent, Object action, double pathCost) {
+    public Node(Object state, Node parent, Object action, double pathCost, double estimatedCostOfCheapestSolution) {
         this.state = state;
         this.parent = parent;
         this.action = action;
         this.pathCost = pathCost;
+        this.estimatedCostOfCheapestSolution = estimatedCostOfCheapestSolution;
     }
 
     public Node(Object state) {
-        this(state, null, null, 0.0);
+        this(state, null, null, 0.0, Double.MAX_VALUE); //TODO is double max good here?
     }
 
     public Object getState() {
@@ -34,6 +36,10 @@ public class Node {
 
     public double getPathCost() {
         return pathCost;
+    }
+
+    public double getEstimatedCostOfCheapestSolution() {
+        return this.estimatedCostOfCheapestSolution;
     }
 
     @Override

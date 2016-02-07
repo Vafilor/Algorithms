@@ -16,7 +16,19 @@ public class ProblemSolver {
 
             System.out.println(slidingBlock.getInitialState());
 
+            long start = System.nanoTime();
+
             List<Object> solution = SearchMethods.graphBreadthFirstSearch(slidingBlock);
+
+            long end = System.nanoTime();
+
+            long firstLength = end - start;
+
+            start = System.nanoTime();
+            List<Object> solution2 = SearchMethods.aStarSearch(slidingBlock);
+            end = System.nanoTime();
+
+            long secondLength = end - start;
 
 //            List<Object> solution = SearchMethods.graphBreadthFirstSearch(slidingBlock);
 
@@ -25,6 +37,14 @@ public class ProblemSolver {
             }
 
             System.out.println(solution);
+            System.out.println(solution2);
+
+            System.out.println("First Took:" + firstLength / Math.pow(10, 9));
+            System.out.println("Second Took:" + secondLength / Math.pow(10, 9));
+
+            System.out.println("Solution 1 Length:" + solution.size());
+            System.out.println("Solution 2 Length:" + solution2.size());
+
         }
         catch (Exception error) {
             error.printStackTrace();

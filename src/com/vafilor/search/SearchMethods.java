@@ -88,6 +88,54 @@ public class SearchMethods {
         return recursiveDepthLimitedSearch(new Node(problem.getInitialState()), problem, limit);
     }
 
+    //TODO check
+    public static List<Object> aStarSearch(ISearchProblem problem) {
+        Node node = new Node(problem.getInitialState());
+
+        PriorityQueue<Node> frontier = new PriorityQueue<Node>(new EstimatedDistanceComparator());//LinkedList<Node>();
+        frontier.add(node);
+        //Use HashMap to keep track of nodes in frontier, much faster to check using HashMap than LinkedList
+        HashMap<String, Node> frontierCopy = new HashMap<String, Node>();
+        frontierCopy.put(node.getState().toString(), node);
+
+        HashMap<String, Node> explored = new HashMap<String, Node>();
+
+        Node child = null;
+
+        while(!frontier.isEmpty()) {
+
+            node = frontier.poll();
+            frontierCopy.remove(node.getState().toString());
+
+            if(problem.isGoalState(node.getState())) {
+                return getSolution(node);
+            }
+
+            if(explored.get(node.getState().toString()) == null) {
+                explored.put(node.getState().toString(), node);
+            }
+
+            for(Object action : problem.getPossibleActions(node) ) {
+                child = getChildNode(problem, node, action);
+
+                //Ensure child is not one we have already considered
+                if( (frontierCopy.get(child.getState().toString()) == null) && (explored.get(child.getState().toString()) == null) )  {
+                    frontier.add(child);
+                } else if( frontierCopy.get(child.getState().toString()) != null) {
+                    Node frontierNode = frontierCopy.get(child.getState().toString());
+
+                    if(frontierNode.getEstimatedCostOfCheapestSolution() > child.getEstimatedCostOfCheapestSolution()) {
+                        frontierCopy.put(child.getState().toString(), child);
+                        frontier.remove( frontierNode );
+                        frontier.add(child);
+                    }
+                }
+            }
+        }
+
+        return null;
+    }
+
     private static List<Object> recursiveDepthLimitedSearch(Node node, ISearchProblem problem, int limit) throws IllegalStateException {
         if(problem.isGoalState(node.getState())) {
             return getSolution(node);
@@ -125,8 +173,9 @@ public class SearchMethods {
     private static Node getChildNode(ISearchProblem problem, Node parent, Object action) {
         Object newState = problem.getResultingState(parent.getState(), action);
         double pathCost = parent.getPathCost() + problem.getStepCost(parent.getState(), action);
+        double estimatedCostOfCheapestSolution = pathCost + problem.getHeuristicCost(newState);
 
-        return new Node(newState, parent, action, pathCost);
+        return new Node(newState, parent, action, pathCost, estimatedCostOfCheapestSolution);
     }
 
     private static List<Object> getSolution(Node solutionNode) {

@@ -11,16 +11,19 @@ public class SlidingBlockProblem implements ISearchProblem {
 
     private int length;
     private SlidingBlockState initialState;
+    private IHeuristic heuristic;
 
     public SlidingBlockProblem(int length) {
         this.length = length;
         this.initialState = new SlidingBlockState(this.length);
+        this.heuristic = new MisplacedTiles();
     }
 
     //TODO error catching
     public SlidingBlockProblem(String sourceFile) throws FileNotFoundException {
         this.initialState = new SlidingBlockState(sourceFile);
         this.length = this.initialState.getLength();
+        this.heuristic = new MisplacedTiles(); //TODO consolidate constructors to not have to have this.heuristic intialized from both spots
     }
 
     @Override
@@ -87,5 +90,12 @@ public class SlidingBlockProblem implements ISearchProblem {
     public double getStepCost(Object previousState, Object action) {
         //For this problem, step cost is a sliding the block once. Path cost is total number of slides performed.
         return 1.0;
+    }
+
+    @Override
+    public double getHeuristicCost(Object obj) {
+        SlidingBlockState state = (SlidingBlockState)obj;
+
+        return this.heuristic.getHeuristicCost(state.getState());
     }
 }

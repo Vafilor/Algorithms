@@ -19,4 +19,12 @@ public interface ISearchProblem {
     Object getResultingState(Object state, Object action);
     boolean isGoalState(Object state);
     double getStepCost(Object previousState, Object action);
+
+    /**
+     * Represents a heuristic function.
+     *
+     * @param state containing current problem state.
+     * @return the estimated cost of the cheapest path from the state to a goal state.
+     */
+    double getHeuristicCost(Object state);
 }
