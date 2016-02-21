@@ -10,45 +10,31 @@ public class ProblemSolver {
 			System.out.println("Expected argument: filename");
 			return;
 		}
-	
+
+        List<SlidingAction> result = null;
+
         try {
-            ISearchProblem slidingBlock = new SlidingBlockProblem(args[0]);
+            ITransitionModel<SlidingBlockState, SlidingAction> transitionModel = new SlidingBlockTransitionModel();
+            IHeuristic<SlidingBlockState> misplacedTiles = new ManhattanDistance();
+            ISlidingBlockGoal goalChecker = new ZeroFirstSlidingBlockGoal();
+            SlidingBlockState initialState = new SlidingBlockState(args[0]);
 
-            System.out.println(slidingBlock.getInitialState());
+            SlidingBlockProblem<SlidingAction> problem = new SlidingBlockProblem<>(transitionModel, initialState, goalChecker);
 
-            long start = System.nanoTime();
+            long startTime = System.currentTimeMillis();
 
-            List<Object> solution = SearchMethods.graphBreadthFirstSearch(slidingBlock);
+            result = SearchMethods.recursiveBestFirstSearch(problem, misplacedTiles);
 
-            long end = System.nanoTime();
+            long endTime = System.currentTimeMillis();
 
-            long firstLength = end - start;
+            double timeInSeconds = (endTime-startTime)/1000.0;
 
-            start = System.nanoTime();
-            List<Object> solution2 = SearchMethods.aStarSearch(slidingBlock);
-            end = System.nanoTime();
-
-            long secondLength = end - start;
-
-//            List<Object> solution = SearchMethods.graphBreadthFirstSearch(slidingBlock);
-
-            if (solution == null) {
-                System.out.println("no solution");
-            }
-
-            System.out.println(solution);
-            System.out.println(solution2);
-
-            System.out.println("First Took:" + firstLength / Math.pow(10, 9));
-            System.out.println("Second Took:" + secondLength / Math.pow(10, 9));
-
-            System.out.println("Solution 1 Length:" + solution.size());
-            System.out.println("Solution 2 Length:" + solution2.size());
+            //System.out.format("Result: %s%n", result.toString());
+            System.out.format("Took %f seconds%n%s", timeInSeconds, result);
 
         }
         catch (Exception error) {
             error.printStackTrace();
         }
     }
-
 }
