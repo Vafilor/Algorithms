@@ -1,77 +1,83 @@
 package com.vafilor.search;
 
 /**
- * Represents a Point in 2 dimensions, with limits on minimum and maximum values for the components.
- * Handy for 2 dimensional arrays (N x N matrices);
+ * Represents a point with integer components. Created so that it can be subclassed and constraints
+ * added/adhered to with setter methods.
+ *
+ * Note: Has set/get Row/Column methods, which try to treat the Point as a point in a Matrix, or 2D array, where the
+ * x and y are flipped. X being Column, Y being row. This is okay, except that the constructor uses x/y and not row/column, so
+ * you still need to construct it backwards. For safety, you can use the setter methods after creating a point.
+ *
  *
  * Created by Andrey Melnikov on 6/7/2015.
  */
-public final class Point implements Cloneable {
-    private int row;
-    private int column;
-    private int minRow;
-    private int maxRow;
-    private int minColumn;
-    private int maxColumn;
+public class Point {
+    protected int x;
+    protected int y;
 
-    public Point(int row, int column, int minRow, int maxRow, int minColumn, int maxColumn) {
-        this.validateInput(row, column, minRow, maxRow, minColumn, maxColumn);
-
-        this.row = row;
-        this.column = column;
-        this.minRow = minRow;
-        this.maxRow = maxRow;
-        this.minColumn = minColumn;
-        this.maxColumn = maxColumn;
+    public Point(int x, int y)
+    {
+        this.setX(x);
+        this.setY(y);
     }
 
-    //region getters
-    public int getRow() {
-        return this.row;
+    /**
+     * Copy Constructor.
+     * @param point
+     */
+    public Point(Point point)
+    {
+        this(point.x, point.y);
     }
 
-    public int getColumn() {
-        return this.column;
-    }
-    //endregion
-
-    public Point addRow(int change) throws IllegalStateException {
-        return new Point(this.row + change, this.column, this.minRow, this.maxRow, this.minColumn, this.maxColumn);
+    public void setX(int x)
+    {
+        this.x = x;
     }
 
-    public Point addColumn(int change) throws IllegalStateException {
-       return new Point(this.row, this.column + change, this.minRow, this.maxRow, this.minColumn, this.maxColumn);
+    public Point addX(int dx)
+    {
+        return new Point(this.x + dx, this.y);
     }
 
-    public boolean isAtMinRow() {
-        return this.row == this.minRow;
+    public Point addRow(int dr)
+    {
+        return new Point(this.x, this.y + dr);
     }
 
-    public boolean isAtMaxRow() {
-        return this.row == this.maxRow;
+    public int getX()
+    {
+        return this.x;
     }
 
-    public boolean isAtMinColumn() {
-        return this.column == this.minColumn;
+    public int getRow()
+    {
+        return this.y;
     }
 
-    public boolean isAtMaxColumn() {
-        return this.column == this.maxColumn;
+    public void setY(int y)
+    {
+        this.y = y;
     }
 
-    //region validators
-    private void validateInput(int row, int column, int minRow, int maxRow, int minColumn, int maxColumn) throws IllegalStateException {
-        if(row < minRow || row > maxRow || column < minColumn || column > maxColumn) {
-            throw new IllegalStateException("Error, tried to construct Point with invalid row/column");
-        }
-    }
-    //endregion
-
-    @Override
-    public Object clone() {
-        //TODO super clone?
-
-        return new Point(this.row, this.column, this.minRow, this.maxRow, this.minColumn, this.maxColumn);
+    public Point addY(int dy)
+    {
+        return new Point(this.x, this.y + dy);
     }
 
+    public Point addColumn(int dc)
+    {
+        return new Point(this.x + dc, this.y);
+    }
+
+    public int getY()
+    {
+        return this.y;
+    }
+
+    //TODO - note why you have these
+    public int getColumn()
+    {
+        return this.x;
+    }
 }
