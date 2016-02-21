@@ -2,54 +2,43 @@ package com.vafilor.search;
 
 /**
  * Created by Andrey Melnikov on 6/7/2015.
+ *
+ * A Node represents an element in the tree and contains a reference to a parent node.
+ *
+ * T is an object that represents a State of a problem.
+ * U is an object that represents an action applicable to a state of the problem.
  */
-public class Node {
-    private Object state;
-    private Node parent;
-    private Object action;
-    private double pathCost;
-    private double estimatedCostOfCheapestSolution;
+public class Node<T,U> {
+    private T state;
+    protected Node<T,U> parent;
+    private U action;
 
-    public Node(Object state, Node parent, Object action, double pathCost, double estimatedCostOfCheapestSolution) {
+    /**
+     * The PathCost is the total cost of the path to this point.
+     */
+    private double pathCost;
+
+    public Node(T state, Node<T,U> parent, U action, double pathCost) {
         this.state = state;
         this.parent = parent;
         this.action = action;
         this.pathCost = pathCost;
-        this.estimatedCostOfCheapestSolution = estimatedCostOfCheapestSolution;
     }
 
-    public Node(Object state) {
-        this(state, null, null, 0.0, Double.MAX_VALUE); //TODO is double max good here?
-    }
 
-    public Object getState() {
+    public T getState() {
         return state;
     }
 
-    public Node getParent() {
+    public Node<T,U> getParent() {
         return parent;
     }
 
-    public Object getAction() {
+    public U getAction() {
         return action;
     }
 
     public double getPathCost() {
         return pathCost;
-    }
-
-    public double getEstimatedCostOfCheapestSolution() {
-        return this.estimatedCostOfCheapestSolution;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if(this.getClass().getSimpleName().equals(obj.getClass().getSimpleName())) {
-            Node that = (Node)obj;
-
-            return this.state.equals(that.state);
-        }
-
-        return false;
     }
 }
