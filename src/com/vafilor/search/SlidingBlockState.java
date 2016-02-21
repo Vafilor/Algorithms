@@ -2,22 +2,21 @@ package com.vafilor.search;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.Arrays;
 import java.util.Scanner;
 
 /**
- * Represents a state of a Sliding Block Puzzle, and provides methods to interact with it and generate new states.
- *
  * Created by Andrey on 6/7/2015.
+ *
+ * Represents a state of a Sliding Block Puzzle.
  */
-public class SlidingBlockState implements Cloneable{
-    private int[][] state;
+public class SlidingBlockState {
+    protected int[][] state;
     /**
      * The length of a side of the "board" of the sliding block puzzle. An 8-puzzle has a length of 3. 3 x 3 board.
      */
-    private int length;
-    private Point blankSpotPosition;
-    private ISlidingBlockGoal goalChecker;
-
+    protected int length;
+    protected Point blankSpotPosition;
     /**
      * Creates a block state given a filename.
      * Filename format: text file. First line, length of grid, then length * length numbers separated by whitepace and newline.
@@ -29,6 +28,7 @@ public class SlidingBlockState implements Cloneable{
      * @param fileName
      */
     //TODO clean up - separate methods out and name properly
+    //TODO -update to use new file methods
     public SlidingBlockState(String fileName) throws FileNotFoundException{
         File sourceFile = new File(fileName);
 
@@ -43,7 +43,7 @@ public class SlidingBlockState implements Cloneable{
                 state[row][column] = fileScanner.nextInt();
 
                 if(state[row][column] == 0) {
-                    this.blankSpotPosition = new Point(row, column, 0, this.length - 1, 0, this.length - 1);
+                    this.blankSpotPosition = new Point(column, row);
                 }
             }
         }
@@ -51,86 +51,63 @@ public class SlidingBlockState implements Cloneable{
         if(this.blankSpotPosition == null) {
             throw new IllegalArgumentException("Error - no 0 in supplied file");
         }
-
-        this.goalChecker = new ZeroLastSlidingBlockGoal(); //TODO perhaps make this singleton to reduce memory cost.
     }
 
+    /**
+     * Creates a sliding block state with the passed in length as its length.
+     * Sets the state contents using {@link #fillInDefaultState(int[][])}.
+     *
+     * @param length
+     */
     public SlidingBlockState(int length) {
         this.length = length;
 
         this.state = new int[length][length];
         this.fillInDefaultState(this.state);
-        this.blankSpotPosition = new Point(this.length -1, this.length - 1,  0, this.length - 1, 0, this.length - 1);
-
-        this.goalChecker = new ZeroLastSlidingBlockGoal(); //TODO perhaps make this singleton to reduce memory cost.
+        this.blankSpotPosition = new Point(this.length - 1, this.length - 1);
     }
 
-    private SlidingBlockState swap(Point blankPosition, Point newBlankPosition) {
-        SlidingBlockState copy = (SlidingBlockState)this.clone();
+    /**
+     * Copy Constructor
+     * @param original The original object to copy.
+     */
+    public SlidingBlockState(SlidingBlockState original)
+    {
+        this.length = original.length;
+        this.blankSpotPosition = new Point(original.blankSpotPosition);
+        this.state = copyInternalState(original.state);
+    }
 
-        copy.state[blankPosition.getRow()][blankPosition.getColumn()] = this.state[newBlankPosition.getRow()][newBlankPosition.getColumn()];
-        copy.state[newBlankPosition.getRow()][newBlankPosition.getColumn()] = this.state[blankPosition.getRow()][blankPosition.getColumn()];
-        copy.blankSpotPosition = (Point)newBlankPosition.clone();
+    //TODO test - particularly if newblank is the same as old blank pos
+
+    /**
+     * @param newBlankPosition
+     * @return a new object where the contents of the current blank position and the passed in position are swapped,
+     *         and everything else is the same.
+     */
+    public SlidingBlockState swapBlank(Point newBlankPosition) {
+        SlidingBlockState copy = new SlidingBlockState(this);
+
+        copy.state[this.blankSpotPosition.getRow()][this.blankSpotPosition.getColumn()] = this.state[newBlankPosition.getRow()][newBlankPosition.getColumn()];
+        copy.state[newBlankPosition.getRow()][newBlankPosition.getColumn()] = 0;
+
+        copy.blankSpotPosition = new Point(newBlankPosition);
 
         return copy;
     }
 
     /**
-     * Moves the "blank" (0) spot.
-     * @param action direction to move 0 spot.
-     * @return new SlidingBlockState where the 0 spot has been moved.
+     * Fills in the passed in 2D int array with values from (array length)^2 - 1 to 0, starting from 0, 0,
+     * moving right and down.
+     *
+     * E.g.
+     *
+     * 8 7 6
+     * 5 4 3
+     * 2 1 0
+     *
+     * @param state
      */
-    public SlidingBlockState applyAction(SlidingAction action) {
-        switch(action) {
-            case Up:
-                return this.moveUp();
-            case Down:
-                return this.moveDown();
-            case Left:
-                return this.moveLeft();
-            case Right:
-                return this.moveRight();
-            default:
-                throw new IllegalStateException("Tried to apply illegal action to sliding block:" + action);
-        }
-    }
-
-    private SlidingBlockState moveUp() {
-        if(this.blankSpotPosition.getRow() == 0) { //TODO use min/max
-            return this;
-        }
-
-        return this.swap(this.blankSpotPosition, this.blankSpotPosition.addRow(-1) );
-    }
-
-    private SlidingBlockState moveDown() {
-        if(this.blankSpotPosition.getRow() == (this.length - 1) ) {
-            return this;
-        }
-
-        return this.swap(this.blankSpotPosition, this.blankSpotPosition.addRow(1));
-    }
-
-    private SlidingBlockState moveLeft() {
-        if(this.blankSpotPosition.getColumn() == 0) {
-            return this;
-        }
-
-        return this.swap(this.blankSpotPosition, this.blankSpotPosition.addColumn(-1));
-    }
-
-    private SlidingBlockState moveRight() {
-        if(this.blankSpotPosition.getColumn() == (this.length - 1) ) {
-            return this;
-        }
-
-        return this.swap(this.blankSpotPosition, this.blankSpotPosition.addColumn(1));
-    }
-
-    public boolean isGoalState() {
-        return this.goalChecker.isGoal(this.state);
-    }
-
     private void fillInDefaultState(int[][] state) {
         int value = state.length * state.length - 1;
 
@@ -142,41 +119,36 @@ public class SlidingBlockState implements Cloneable{
         }
     }
 
-    @Override
-    public Object clone() {
-        //TODO super clone?
-
-        SlidingBlockState copy = new SlidingBlockState(this.length);
-
-        //TODO look up array copy method for easier times
-
-        for(int row = 0; row < this.state.length; row++) {
-            for(int column = 0; column < this.state[row].length; column++) {
-                copy.state[row][column] = this.state[row][column];
-            }
-        }
-
-        copy.blankSpotPosition = (Point)this.blankSpotPosition.clone();
-        copy.length = this.length;
-
-        return copy;
-    }
-
+    /**
+     * @return a string of this state where each entry is separated by a space, and each row is separated by a newline.
+     *
+     * E.g.
+     *
+     * 1 2 3
+     * 4 5 6
+     * 7 8 0
+     */
     @Override
     public String toString() {
-        String result = "";
+        StringBuilder result = new StringBuilder();
 
         for(int i = 0; i < this.state.length; i++) {
             for(int j = 0; j < this.state[i].length; j++) {
-                result += this.state[i][j] + " ";
+                result.append(this.state[i][j]);
+                result.append(" ");
             }
 
-            result += "\n";
+            result.append( System.lineSeparator() );
         }
 
-        return result;
+        return result.toString();
     }
 
+    /**
+     * Two SlidingBlockStates are equal if they have the same length and the same contents in every position.
+     * @param obj
+     * @return
+     */
     @Override
     public boolean equals(Object obj) {
         if(this.getClass().getSimpleName().equals(obj.getClass().getSimpleName())) {
@@ -205,11 +177,76 @@ public class SlidingBlockState implements Cloneable{
     }
 
     public Point getBlankSpotPosition() {
-        return this.blankSpotPosition;
+        return new Point(this.blankSpotPosition);
     }
 
-    //TODO how can I avoid exposing this?
-    public int[][] getState() {
-        return state;
+
+    private static int[][] copyInternalState(int[][] original)
+    {
+        int[][] copy = new int[original.length][];
+
+        for(int i = 0; i < original.length; i++)
+        {
+            copy[i] = Arrays.copyOf(original[i], original[i].length);
+        }
+
+        return copy;
+    }
+
+    /**
+     * @return true if the blank is at its minimum possible row, false otherwise.
+     */
+    public boolean blankAtMinRow()
+    {
+        return this.blankSpotPosition.getRow() == this.minRow();
+    }
+
+    /**
+     * @return true if the blank is at its maximum possible row, false otherwise.
+     */
+    public boolean blankAtMaxRow() {
+        return this.blankSpotPosition.getRow() == this.maxRow();
+    }
+
+    /**
+     * @return true if the blank is at its minimum possible column, false otherwise.
+     */
+    public boolean blankAtMinColumn() {
+        return this.blankSpotPosition.getColumn() == this.minColumn();
+    }
+
+    /**
+     * @return true if the blank is at its maxmium possible column, false otherwise.
+     */
+    public boolean blankAtMaxColumn() {
+        return this.blankSpotPosition.getColumn() == this.maxColumn();
+    }
+
+    /**
+     * @return the minimum possible row of this state.
+     */
+    public int minRow() {
+        return 0;
+    }
+
+    /**
+     * @return the maxmimum possible row of this state.
+     */
+    public int maxRow() {
+        return this.length - 1;
+    }
+
+    /**
+     * @return the minimum possible column of this state.
+     */
+    public int minColumn() {
+        return 0;
+    }
+
+    /**
+     * @return the maxmimum possible column of this state.
+     */
+    public int maxColumn() {
+        return this.length - 1;
     }
 }
