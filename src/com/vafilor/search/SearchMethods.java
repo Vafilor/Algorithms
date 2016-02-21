@@ -200,6 +200,11 @@ public class SearchMethods {
 
     }
 
+	/**
+	* Based on the pseudo-code outlined in: Artificial Intelligence: A Modern Approach (3rd Edition) 3rd Edition
+    * by Stuart Russell, Peter Norvig
+    *
+	*/
     public static <T,U> List<U> recursiveBestFirstSearch(ISearchProblem<T,U> problem, IHeuristic<T> heuristicFunction)
     {
         LimitNode<T,U> initialNode = makeLimitNode(problem, heuristicFunction);//TODO can an enum be null?> Err, do we want that?

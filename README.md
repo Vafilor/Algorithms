@@ -47,27 +47,24 @@ A genetic algorithm is probably not a good choice for the n-queens problem. I hi
 
 #Search Problems
 
-For fun: try out the solution with <br/>
- http://mypuzzle.org/sliding
- 
- You'll have to enter in the random puzzle it generates, replacing the blank with a 0 in the text file.
+To Compile
+-----------------------
+1. Open up a terminal/command line and navigation to src directory. 
+2. Enter the command
+  1. Windows: javac com\vafilor\search\*.java 
+  2. Linuxy: javac com/vafilor/search/*.java 
 
-<h3>To Compile</h3>
-At this moment, it is sufficient to just run the command (in the com/vafilor/search directory): <br/>
-  javac *.java 
+To Run
+-----------------
+1. Open up a terminal/command line and navigation to src directory. 
+2. Enter the command:  **java com.vafilor.search.ProblemSolver InputFiles/test1.txt
+		
+* The argument is the sample n-problem to solve in a textfile.
+* The puzzle is expected to be solvable with the solution having the "blank" or 0 in the top left.
 
-<h3>To Run (Windows)</h3>
-<ul>
-<li>In the command prompt, navigate to the directory src</li>
-<li>Run the command java com.vafilor.search.ProblemSolver InputFiles/test3.txt</li>
-</ul>
+Results
+------------------
+This will output an estimate of the time taken to solve the problem and the action sequence to solve the problem in the 
+provided input file.
 
-This will output the actions needed to solve the problem in the test3.txt file.
 
-<h3>To Run (Mac/Linux)</h3>
-<ul>
-<li>In the command prompt, navigate to the directory src</li>
-<li>Run the command java com.vafilor.search.ProblemSolver InputFiles/test3.txt</li>
-</ul>
-
-This will output the actions needed to solve the problem in the test3.txt file.
