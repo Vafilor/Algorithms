@@ -3,16 +3,11 @@ package com.vafilor.search;
 import java.util.Comparator;
 
 /**
- * Created by Andrey on 6/25/2015.
+ * Created by Andrey Melnikov on 6/25/2015.
  */
-public class EstimatedDistanceComparator implements Comparator<Node> {
-
-    //TODO simplify?
-    public int compare(Node first, Node second) {
-        if(first.getEstimatedCostOfCheapestSolution() < second.getEstimatedCostOfCheapestSolution()) {
-            return -1;
-        }
-
-        return 1;
+public class EstimatedDistanceComparator implements Comparator<HeuristicNode>
+{
+    public int compare(HeuristicNode first, HeuristicNode second) {
+        return Double.compare(first.getEstimatedCostOfCheapestSolution(), second.getEstimatedCostOfCheapestSolution());
     }
 }
